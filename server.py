@@ -332,10 +332,14 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Trivy Security Scanner MCP Server")
-    parser.add_argument("--port", type=int, default=54321, help="Port to launch the MCP server on.")
-    parser.add_argument("--transport", type=str, default="sse", choices=["sse", "stdio"], help="The transport of MCP Server to run (options: sse, stdio).")
+    parser.add_argument("--transport", type=str, default="stdio", choices=["sse", "stdio"], help="The transport of MCP Server to run (options: sse, stdio).")
     
     args = parser.parse_args()
 
-    # The mcp.run() function handles starting the server based on the transport.
-    mcp.run(port=args.port, transport=args.transport)
+    # Run the MCP server
+    if args.transport == "stdio":
+        mcp.run()
+    else:
+        # For SSE, we need to use uvicorn or similar
+        import uvicorn
+        uvicorn.run(mcp.app, host="127.0.0.1", port=54321)
